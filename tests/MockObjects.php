@@ -8,6 +8,7 @@
 class DummyPDOStatement extends PDOStatement
 {
     private $current_row = 0;
+
     /**
      * Return some dummy data
      */

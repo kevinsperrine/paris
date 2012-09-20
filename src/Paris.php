@@ -1,11 +1,104 @@
 <?php
 /**
- * Paris base class. Your model objects should extend
- * this class. A minimal subclass would look like:
+ * Paris
  *
- * class Widget extends Paris {
- * }
+ * A completely rewritten, to match PSR coding standards, version of Paris.
  *
+ * http://github.com/j4mie/paris/
+ * http://github.com/kevinsperrine/paris/
+ *
+ * A simple Active Record implementation built on top of Idiorm
+ * ( http://github.com/j4mie/idiorm/ ).
+ *
+ * You should include Idiorm before you include this file:
+ * require_once 'your/path/to/idiorm.php';
+ *
+ * BSD Licensed.
+ *
+ * Copyright (c) 2010, Jamie Matthews
+ * Copyright (c) 2012, Kevin Perrine
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @category ActiveRecord
+ * @package  Paris
+ * @author   Jamie Matthews <jamie.matthews@gmail.com>
+ * @author   Kevin Perrine <kperrine@gmail.com>
+ * @license  BSD http://opensource.org/licenses/bsd-license.php
+ * @version  2.0.0
+ * @link     http://github.com/j4mie/idiorm/
+ * @link     https://github.com/kevinsperrine/idiorm
+ */
+
+/**
+ * Paris
+ *
+ * A completely rewritten, to match PSR coding standards, version of Paris.
+ *
+ * http://github.com/j4mie/paris/
+ * http://github.com/kevinsperrine/paris/
+ *
+ * A simple Active Record implementation built on top of Idiorm
+ * ( http://github.com/j4mie/idiorm/ ).
+ *
+ * You should include Idiorm before you include this file:
+ * require_once 'your/path/to/idiorm.php';
+ *
+ * BSD Licensed.
+ *
+ * Copyright (c) 2010, Jamie Matthews
+ * Copyright (c) 2012, Kevin Perrine
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @category ActiveRecord
+ * @package  Paris
+ * @author   Jamie Matthews <jamie.matthews@gmail.com>
+ * @author   Kevin Perrine <kperrine@gmail.com>
+ * @license  BSD http://opensource.org/licenses/bsd-license.php
+ * @version  2.0.0
+ * @link     http://github.com/j4mie/idiorm/
+ * @link     https://github.com/kevinsperrine/idiorm
  */
 class Paris
 {
@@ -26,8 +119,14 @@ class Paris
      * Retrieve the value of a static property on a class. If the
      * class or the property does not exist, returns the default
      * value supplied as the third argument (which defaults to null).
+     *
+     * @param string $class_name class name to retreive property from
+     * @param string $property   property you wish to get
+     * @param null   $default    the default return value if the property doesn't exist
+     *
+     * @return mixed returns the property, if exists, or default otherwise
      */
-    protected static function getStaticProperty($class_name, $property, $default=null)
+    protected static function getStaticProperty($class_name, $property, $default = null)
     {
         if (!class_exists($class_name) || !property_exists($class_name, $property)) {
             return $default;
@@ -43,6 +142,10 @@ class Paris
      * named $_table, the value of this property will be
      * returned. If not, the class name will be converted using
      * the classNameToTableName method method.
+     *
+     * @param string $class_name class name
+     *
+     * @return string name of table associated with given class
      */
     protected static function getTableName($class_name)
     {
@@ -58,6 +161,10 @@ class Paris
      * Static method to convert a class name in CapWords
      * to a table name in lowercase_with_underscores.
      * For example, CarTyre would be converted to car_tyre.
+     *
+     * @param string $class_name class name
+     *
+     * @return string table name, in underscored lowercase, of associated class
      */
     protected static function classNameToTableName($class_name)
     {
@@ -65,8 +172,12 @@ class Paris
     }
 
     /**
-     * Return the ID column name to use for this class. If it is
-     * not set on the class, returns null.
+     * Return the ID column name to use for this class. If not set in the class
+     * it will return 'id'
+     *
+     * @param string $class_name class name
+     *
+     * @return string the name of the id column for this class
      */
     protected static function getIdColumnName($class_name)
     {
@@ -78,6 +189,12 @@ class Paris
      * (the specified foreign key column name) is null, returns the second
      * argument (the name of the table) with the default foreign key column
      * suffix appended.
+     *
+     * @param string $specified_foreign_key_name name of foreign key
+     * @param string $table_name                 name of table
+     *
+     * @return string either the name given, or one created by
+     *                suffixing the default to the table name
      */
     protected static function buildForeignKeyName($specified_foreign_key_name, $table_name)
     {
@@ -95,7 +212,11 @@ class Paris
      * should exist). This method actually returns a wrapped ORM object
      * which allows a database query to be built. The wrapped ORM object is
      * responsible for returning instances of the correct class when
-     * its find_one or find_many methods are called.
+     * its findOne or findMany methods are called.
+     *
+     * @param string $class_name class name
+     *
+     * @return OrmWrapper OrmWrapper object used for this instance
      */
     public static function factory($class_name)
     {
@@ -112,8 +233,13 @@ class Paris
      * hasMany methods. These two types of association are identical; the
      * only difference is whether find_one or find_many is used to complete
      * the method chain.
+     *
+     * @param string $associated_class_name name of class that it has
+     * @param string $foreign_key_name      foreign key to use in teh relationship
+     *
+     * @return OrmWrapper
      */
-    protected function hasOneOrMany($associated_class_name, $foreign_key_name=null)
+    protected function hasOneOrMany($associated_class_name, $foreign_key_name = null)
     {
         $base_table_name = self::getTableName(get_class($this));
         $foreign_key_name = self::buildForeignKeyName($foreign_key_name, $base_table_name);
@@ -124,8 +250,13 @@ class Paris
     /**
      * Helper method to manage one-to-one relations where the foreign
      * key is on the associated table.
+     *
+     * @param string $associated_class_name class name of relation
+     * @param string $foreign_key_name      foreign key for relationship
+     *
+     * @return OrmWrapper
      */
-    protected function hasOne($associated_class_name, $foreign_key_name=null)
+    protected function hasOne($associated_class_name, $foreign_key_name = null)
     {
         return $this->hasOneOrMany($associated_class_name, $foreign_key_name);
     }
@@ -134,7 +265,15 @@ class Paris
      * Helper method to manage one-to-many relations where the foreign
      * key is on the associated table.
      */
-    protected function hasMany($associated_class_name, $foreign_key_name=null)
+    /**
+     * [hasMany description]
+     *
+     * @param string $associated_class_name class name of relation
+     * @param string $foreign_key_name      foreign key for relationship
+     *
+     * @return OrmWrapper
+     */
+    protected function hasMany($associated_class_name, $foreign_key_name = null)
     {
         return $this->hasOneOrMany($associated_class_name, $foreign_key_name);
     }
@@ -142,21 +281,33 @@ class Paris
     /**
      * Helper method to manage one-to-one and one-to-many relations where
      * the foreign key is on the base table.
+     *
+     * @param string $associated_class_name class name of relation
+     * @param string $foreign_key_name      foreign key used in relationship
+     *
+     * @return OrmWrapper
      */
-    protected function belongsTo($associated_class_name, $foreign_key_name=null)
+    protected function belongsTo($associated_class_name, $foreign_key_name = null)
     {
         $associated_table_name = self::getTableName($associated_class_name);
         $foreign_key_name = self::buildForeignKeyName($foreign_key_name, $associated_table_name);
         $associated_object_id = $this->$foreign_key_name;
 
-        return self::factory($associated_class_name)->where_id_is($associated_object_id);
+        return self::factory($associated_class_name)->whereIdIs($associated_object_id);
     }
 
     /**
      * Helper method to manage many-to-many relationships via an intermediate model. See
      * README for a full explanation of the parameters.
+     *
+     * @param string $associated_class_name   class name of relation
+     * @param string $join_class_name         class name of intermediary
+     * @param string $key_to_base_table       foreign key for base table
+     * @param string $key_to_associated_table foreign key for assocated table
+     *
+     * @return OrmWrapper
      */
-    protected function hasManyThrough($associated_class_name, $join_class_name=null, $key_to_base_table=null, $key_to_associated_table=null)
+    protected function hasManyThrough($associated_class_name, $join_class_name = null, $key_to_base_table = null, $key_to_associated_table = null)
     {
         $base_class_name = get_class($this);
 
@@ -190,6 +341,10 @@ class Paris
 
     /**
      * Set the wrapped ORM instance associated with this Paris instance.
+     *
+     * @param Orm $orm OrmWrapper object to assign to this instance
+     *
+     * @return none
      */
     public function setOrm($orm)
     {
@@ -198,6 +353,10 @@ class Paris
 
     /**
      * Magic getter method, allows $model->property access to data.
+     *
+     * @param string $property name of property to access
+     *
+     * @return mixed returns the property if available, null otherwise
      */
     public function __get($property)
     {
@@ -206,6 +365,11 @@ class Paris
 
     /**
      * Magic setter method, allows $model->property = 'value' access to data.
+     *
+     * @param string $property name of property
+     * @param mixed  $value    value to assign to property
+     *
+     * @return none
      */
     public function __set($property, $value)
     {
@@ -214,6 +378,10 @@ class Paris
 
     /**
      * Magic isset method, allows isset($model->property) to work correctly.
+     *
+     * @param string $property name of property check
+     *
+     * @return boolean true if isset, false otherwise
      */
     public function __isset($property)
     {
@@ -222,6 +390,10 @@ class Paris
 
     /**
      * Getter method, allows $model->get('property') access to data
+     *
+     * @param string $property name of property to access
+     *
+     * @return mixed value of property if exists, null othewise
      */
     public function get($property)
     {
@@ -230,6 +402,11 @@ class Paris
 
     /**
      * Setter method, allows $model->set('property', 'value') access to data.
+     *
+     * @param string $property name of property
+     * @param mixed  $value    value to assign to property
+     *
+     * @return none
      */
     public function set($property, $value)
     {
@@ -238,6 +415,10 @@ class Paris
 
     /**
      * Check whether the given field has changed since the object was created or saved
+     *
+     * @param string $property property to check
+     *
+     * @return boolean true if has not been saved, false otherwise
      */
     public function isDirty($property)
     {
@@ -246,6 +427,8 @@ class Paris
 
     /**
      * Wrapper for Idiorm's asArray method.
+     *
+     * @return array returns the current instance an as array
      */
     public function asArray()
     {
@@ -256,6 +439,8 @@ class Paris
 
     /**
      * Save the data associated with this model instance to the database.
+     *
+     * @return boolean true on success, false on failure
      */
     public function save()
     {
@@ -264,6 +449,8 @@ class Paris
 
     /**
      * Delete the database row associated with this model instance.
+     *
+     * @return boolean true on success, false on failure
      */
     public function delete()
     {
@@ -272,6 +459,8 @@ class Paris
 
     /**
      * Get the database ID of this model instance.
+     *
+     * @return integer database id of this model
      */
     public function id()
     {
@@ -283,6 +472,10 @@ class Paris
      * WARNING: The keys in the array MUST match with columns in the
      * corresponding database table. If any keys are supplied which
      * do not match up with columns, the database will throw an error.
+     *
+     * @param array $data associative array of data
+     *
+     * @return OrmWrapper return the current instance populated with the new data.
      */
     public function hydrate($data)
     {
