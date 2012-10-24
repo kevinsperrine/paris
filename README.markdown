@@ -37,6 +37,14 @@ Changelog
 
 * Fix incorrect tests, see issue #12
 
+#### 2.0.0 - released 2012-09-19
+
+* Massive changed to be PSR Compliant, build on [KevinSPerrine's Idiorm fork](https://github.com/kevinsperrine/idiorm)
+
+#### 2.0.1 - released 2012-10-24
+
+* Fixed two typos calling wrong Idiorm functions
+
 Philosophy
 ----------
 
