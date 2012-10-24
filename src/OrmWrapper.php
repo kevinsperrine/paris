@@ -175,7 +175,7 @@ class OrmWrapper extends ORM
      */
     public static function forTable($table_name)
     {
-        self::setupDb();
+        self::setupDatabase();
 
         return new self($table_name);
     }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Paris Tests" tests="9" assertions="19" failures="0" errors="0" time="0.117782">
+    <testsuite name="ModelTest" file="/home/kevin/Projects/paris/tests/ModelTest.php" tests="9" assertions="19" failures="0" errors="0" time="0.117782">
+      <testcase name="testAssertTrue" class="ModelTest" file="/home/kevin/Projects/paris/tests/ModelTest.php" line="20" assertions="1" time="0.003064"/>
+      <testcase name="testSimpleModel" class="ModelTest" file="/home/kevin/Projects/paris/tests/ModelTest.php" line="25" assertions="1" time="0.014861"/>
+      <testcase name="testComplexModel" class="ModelTest" file="/home/kevin/Projects/paris/tests/ModelTest.php" line="32" assertions="1" time="0.005636"/>
+      <testcase name="testModelWithCustomTable" class="ModelTest" file="/home/kevin/Projects/paris/tests/ModelTest.php" line="39" assertions="1" time="0.006131"/>
+      <testcase name="testModelWithCustomTableAndCustomIDColumn" class="ModelTest" file="/home/kevin/Projects/paris/tests/ModelTest.php" line="46" assertions="1" time="0.004965"/>
+      <testcase name="testModelWithFilters" class="ModelTest" file="/home/kevin/Projects/paris/tests/ModelTest.php" line="53" assertions="2" time="0.010099"/>
+      <testcase name="testModelInsertUpdateDelete" class="ModelTest" file="/home/kevin/Projects/paris/tests/ModelTest.php" line="64" assertions="3" time="0.012396"/>
+      <testcase name="testRelationships" class="ModelTest" file="/home/kevin/Projects/paris/tests/ModelTest.php" line="87" assertions="6" time="0.040538"/>
+      <testcase name="testComplexRelationships" class="ModelTest" file="/home/kevin/Projects/paris/tests/ModelTest.php" line="122" assertions="3" time="0.020092"/>
+    </testsuite>
+  </testsuite>
+</testsuites>

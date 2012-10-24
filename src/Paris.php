@@ -479,6 +479,6 @@ class Paris
      */
     public function hydrate($data)
     {
-        $this->orm->hydrate($data)->force_all_dirty();
+        $this->orm->hydrate($data)->forceAllDirty();
     }
 }
