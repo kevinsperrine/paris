@@ -221,7 +221,7 @@ class Paris
     public static function factory($class_name)
     {
         $table_name = self::getTableName($class_name);
-        $wrapper = ORMWrapper::forTable($table_name);
+        $wrapper = OrmWrapper::forTable($table_name);
         $wrapper->setClassName($class_name);
         $wrapper->useIdColumn(self::getIdColumnName($class_name));
 
