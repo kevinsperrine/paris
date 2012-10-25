@@ -45,6 +45,10 @@ Changelog
 
 * Fixed two typos calling wrong Idiorm functions
 
+#### 2.0.2 - released 2012-10-25
+
+* Added more tests to increase code coverage, and fixed minor bugs found along the way.
+
 Philosophy
 ----------
 

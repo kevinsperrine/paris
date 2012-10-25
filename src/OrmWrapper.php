@@ -163,6 +163,8 @@ class OrmWrapper extends ORM
                 $args
             );
         }
+
+        throw new Exception(sprintf('%1$s was not found as a valid function in the %2$s class.', $filter_function, $this->class_name));
     }
 
     /**

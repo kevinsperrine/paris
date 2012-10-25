@@ -6,6 +6,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         // Enable logging
         ORM::configure('logging', true);
+        ORM::configure('caching', false);
 
         // Set up the dummy database connection
         $db = new DummyPDO('sqlite::memory:');
@@ -17,9 +18,44 @@ class ModelTest extends PHPUnit_Framework_TestCase
         // your code here
     }
 
-    public function testAssertTrue()
+    public function testHydrateAndAsArray()
     {
-        $this->assertTrue(true);
+        $book = Model::factory('Simple');
+
+        $model = $book->create();
+
+        $model->hydrate(array(
+            'title' => 'Harry Potter'
+        ));
+
+        $model->set('publisher', 'Scholastic');
+
+        $this->assertTrue($model->isDirty('publisher'));
+
+        $model->save();
+
+        $bookData = $model->asArray();
+        $this->assertTrue(is_array($bookData));
+        $this->assertFalse($model->isDirty('publisher'));
+        $this->assertContains('Harry Potter', $bookData);
+    }
+
+    public function testSettersAndGetters()
+    {
+        $book = Model::factory('Simple');
+
+        $model = $book->create(array(
+            'name' => 'The Hunger Games',
+        ));
+
+        $this->assertTrue($model->isDirty('name'));
+
+        $model->save();
+
+        $this->assertEquals($model->get('name'), 'The Hunger Games');
+        $model->set('name', 'The Wizard of Oz');
+        $this->assertEquals($model->get('name'), 'The Wizard of Oz');
+        $this->assertTrue(isset($model->name));
     }
 
     public function testSimpleModel()
@@ -27,6 +63,15 @@ class ModelTest extends PHPUnit_Framework_TestCase
         Model::factory('Simple')->findMany();
         $expected = 'SELECT * FROM `simple`';
         $this->assertEquals($expected, ORM::getLastQuery());
+    }
+
+    public function testCreateModelNonExistentId()
+    {
+        // hack built into the Mock PDO Statement to automatically return false
+        // ie. not found, when searching for IDs equal to 9999
+        $models = Model::factory('Simple')->findOne(9999);
+        
+        $this->assertFalse($models);
     }
 
     public function testComplexModel()
@@ -61,9 +106,23 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, ORM::getLastQuery());
     }
 
+    public function testModelWithNonExistentFilters()
+    {
+        // This attempts to filter with an invalid function.
+        // An exception should be caught, because the method doesn't exist.
+        try {
+            Model::factory('ModelWithFilters')->filter('name_is_george')->findMany();
+        } catch (Exception $e) {
+            return;
+        }
+
+        // If an exception isn't caught and the method returns
+        // then this should be considered a failure.
+        $this->fail();
+    }
+
     public function testModelInsertUpdateDelete()
     {
-
         $widget = Model::factory('Widget')->create();
         $widget->name = "Fred";
         $widget->age = 10;
@@ -121,7 +180,6 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testComplexRelationships()
     {
-
         $book = Model::factory('Book')->findOne(1);
         $authors = $book->authors()->findMany();
         $expected = "SELECT `author`.* FROM `author` JOIN `author_book` ON `author`.`id` = `author_book`.`author_id` WHERE `author_book`.`book_id` = '1'";
@@ -134,4 +192,6 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, ORM::getLastQuery());
     }
+
+
 }
